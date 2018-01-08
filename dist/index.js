@@ -17,7 +17,7 @@ var router = {
 
     process: function (params, request, response) {
         var mimes = ["text/html", "text/xml", "text/plain", "text/javascript", "application/javascript", "application/json"]
-        
+
         var isItOK = this.middlewares.reduce(function execMiddleware(flag, middFnc) {
             flag = (flag === undefined) ? true : flag
 
@@ -55,7 +55,7 @@ var router = {
             httpResponse.setContentLength(response.contentLength)
             ops.write(response.out[0])
             ops.flush()
-        }        
+        }
 
     },
 
@@ -105,7 +105,7 @@ var router = {
                     "/", splitRoute.shift()
                 ].join(""))
 
-            if (Object.keys(params).toString() === "") 
+            if (Object.keys(params).toString() === "")
                 paramsObject = splitRoute
 
         } else
@@ -158,9 +158,9 @@ var router = {
         // print("\nvrota => [" + vrota + "]")
         // print("\ntypeof(rrota) => [" + typeof(rrota) + "]")
 
-        if (typeof(rrota) == "function") 
+        if (typeof(rrota) == "function")
             rrota(params, request, response)
-        else 
+        else
             runMethodOnModule(rrota)
     }
 }
