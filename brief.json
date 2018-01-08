@@ -1,13 +1,8 @@
 {
-    "bit": "router",
-
-    "path": "dist/index.js",
-
-    "version": "0.1.0",
-
-    "author": "Nery Jr",
-
-    "description": "Router module",
-
-    "dependencies": []
-  }
+  "description": "Router module",
+  "name": "router",
+  "path": "dist",
+  "version": "0.1.0",
+  "author": "Nery Jr",
+  "dependencies": [ ]
+}
