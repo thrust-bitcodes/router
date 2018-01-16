@@ -85,13 +85,15 @@ var router = {
       var module = require(path.join("/") + ".js")
       var fnc_metodo = module[methodName]
 
-      fnc_metodo = (fnc_metodo)
-        ? fnc_metodo
-        : module[
-        request
-          .method
-          .toUpperCase()
-        ][methodName]
+      if(!fnc_metodo) {
+        if(!request || !request.method || !module || !module[request.method.toUpperCase()]) {
+          response.json("Error 404: URI not found.", 404)
+          return
+        }
+
+        fnc_metodo = module[request.method.toUpperCase()][methodName]
+      }
+
       fnc_metodo(paramsObject, request, response)
     }
 
