@@ -15,6 +15,14 @@ var router = {
     }
   },
 
+  addRoute: function (virtualRoute, realRoute) {
+    router.vroutes[virtualRoute] = realRoute
+  },
+
+  addMiddleware: function (middleware) {
+    router.middlewares.push(middleware)
+  },
+
   process: function (params, request, response) {
     var mimes = ["text/html", "text/xml", "text/plain", "text/javascript", "application/javascript", "application/json"]
 
