@@ -23,7 +23,10 @@ router.addRoute('caminho/virtual/funcaoX', 'caminho/real/do/arquivo/funcaoX')
 
 server.createServer(8778, router)
 ```
-O modulo router contém as seguintes propriedades
+
+Acesso tutorial mais rico sobre roteamentos físicos e virtuais em nosso [gitbook](https://thrustjs.gitbooks.io/thrustjs/roteamento.html).
+
+## API
 
 ```javascript
 /**
@@ -45,6 +48,7 @@ addMiddleware(fn)
 */
 addRoute(pathVirtual, pathReal)
 ```
+
 Acesse também os outros *bitcodes* utilizados no exemplo para melhor entendimento:
 
 - [thrust-bitcodes/http](https://github.com/thrust-bitcodes/http)
