@@ -5,6 +5,14 @@ Router é um *bitcode* de roteamento para [Thrust](https://github.com/Thrustjs/t
 
 Usado em conjunto com o *bitcode* [thrust-bitcodes/http](https://github.com/thrust-bitcodes/http) para criar rotas de requisição REST, com suporte a middleware, rotas virtuais, dentre outros.
 
+# Instalação
+
+Posicionado em um app [ThrustJS](https://github.com/thrustjs/thrust), no seu terminal:
+
+```bash
+thrust install router
+```
+
 ## Tutorial
 
 ```javascript
@@ -24,7 +32,7 @@ router.addRoute('caminho/virtual/funcaoX', 'caminho/real/do/arquivo/funcaoX')
 server.createServer(8778, router)
 ```
 
-Acesso tutorial mais rico sobre roteamentos físicos e virtuais em nosso [gitbook](https://thrustjs.gitbooks.io/thrustjs/roteamento.html).
+Acesse um tutorial mais rico sobre roteamentos físicos e virtuais em nosso [gitbook](https://thrustjs.gitbooks.io/thrustjs/roteamento.html).
 
 ## API
 
