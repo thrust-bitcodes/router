@@ -21,6 +21,8 @@ module.exports = {
     "window": false,
     "print": true,
     "show": true,
+    "getConfig": true,
+    "getBitcodeConfig": true,
     "console": true
   },
 
