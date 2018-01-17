@@ -15,6 +15,10 @@ var router = {
     }
   },
 
+  setApplicationDirectory: function (appDirectory) {
+    router.applicationDirectory = appDirectory
+  },
+
   addRoute: function (virtualRoute, realRoute) {
     router.vroutes[virtualRoute] = realRoute
   },

@@ -1,20 +1,25 @@
 Router
 ===============
 
-Router é um *bitcode* de roteamento para o servidor [thrust-bitcodes/http](https://github.com/thrust-bitcodes/http), usado para criar rotas de requisição REST, com suporte a middleware, rotas virtuais, dentre outros.
+Router é um *bitcode* de roteamento para [Thrust](https://github.com/Thrustjs/thrust).
+
+Usado em conjunto com o *bitcode* [thrust-bitcodes/http](https://github.com/thrust-bitcodes/http) para criar rotas de requisição REST, com suporte a middleware, rotas virtuais, dentre outros.
 
 ## Tutorial
 
 ```javascript
-var server = require('thrust-bitcodes/http')
-var router = require('thrust-bitcodes/router')
-var auth   = require('thrust-bitcodes/authentication')
+var server = require('http')
+var router = require('router')
+var auth   = require('authentication')
 
-router.middlewares.push(auth.validateAccess)
+router.addMiddleware(auth.validateAccess)
 
-router.middlewares.push(function(params, request, response) {
+router.addMiddleware(function(params, request, response) {
   print(JSON.stringify(params))
+  return true
 })
+
+router.addRoute('caminho/virtual/funcaoX', 'caminho/real/do/arquivo/funcaoX')
 
 server.createServer(8778, router)
 ```
@@ -25,7 +30,7 @@ O modulo router contém as seguintes propriedades
  * Usado para configurar o diretório root,
  * de onde o roteamento pesquisará pelos endpoints
  * */
-applicationDirectory /*String ["./"]*/
+setApplicationDirectory(appDirectory) /* default "./" */
 
 /**
  * Usado para adicionar middlewares na aplicação.
@@ -33,15 +38,14 @@ applicationDirectory /*String ["./"]*/
  * que são chamadas no inicio do processamento das rotas.
  * Caso algum middleware retorne false, a chamada é interrompida.
 */
-middlewares /*Array*/
+addMiddleware(fn)
 
 /**
- * Usado para adicionar rotas virtuais na aplicação.
+ * Usado para adicionar rotas virtuais na aplicação
 */
-vroutes /*Object*/
+addRoute(pathVirtual, pathReal)
 ```
-
-Acesse também os outros módulos utilizados no exemplo para melhor entendimento:
+Acesse também os outros *bitcodes* utilizados no exemplo para melhor entendimento:
 
 - [thrust-bitcodes/http](https://github.com/thrust-bitcodes/http)
 - [thrust-bitcodes/authentication](https://github.com/thrust-bitcodes/authentication)
