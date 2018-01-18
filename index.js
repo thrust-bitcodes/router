@@ -24,7 +24,13 @@ var router = {
   },
 
   addMiddleware: function (middleware) {
-    router.middlewares.push(middleware)
+    if (typeof middleware === 'function') {
+      router.middlewares.push(middleware)
+    } else if (typeof middleware === 'object' && typeof middleware.middleware === 'function') {
+      router.middlewares.push(middleware.middleware)
+    } else {
+      throw new Error('A middleware must be a function or contain a function called \'middleware\'')
+    }
   },
 
   process: function (params, request, response) {
