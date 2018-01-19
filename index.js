@@ -122,9 +122,9 @@ let router = {
           '/', splitRoute.shift()
         ].join(''))
 
-      if (Object.keys(params).toString() === '') {
-        paramsObject = splitRoute
-      }
+      // if (Object.keys(params).toString() === '') {
+      //   paramsObject = splitRoute
+      // }
     } else if (keys.indexOf(nurl) >= 0) { /* É simplesmente um virtual path? */
       rrota = this.vroutes[nurl]
     } else { /* Ou é uma rota com placeholder ou é uma url do tipo ../modulo/metodo */
