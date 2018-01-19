@@ -1,0 +1,12 @@
+{
+  "description": "Módulo de testes do router",
+  "version": "0.2.0",
+  "author": "Nery Jr",
+  "dependencies": {
+    "bitcodes": [
+      "thrust-bitcodes/majesty"
+    ],
+    "jars": [
+    ]
+  }
+}
