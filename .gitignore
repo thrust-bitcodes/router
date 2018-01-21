@@ -6,3 +6,4 @@ test/test.mv.db
 test/test.trace.db
 tomcat.*
 *.java
+.prettierrc
