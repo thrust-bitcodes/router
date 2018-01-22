@@ -5,12 +5,13 @@ let httpResponse = {
     charset: '',
     headers: {},
     contentLength: 0,
-    contentSend: '',
+    content: '',
 
     getWriter: function() {
         var println = function(str) {
             // ths.out.push(str, '\n')
             this.out = str
+            // print('out =>', str)
         }.bind(this)
 
         return {
@@ -27,30 +28,30 @@ let httpResponse = {
                 // ths.out.push(str)
             },
             flush: function() {
-                // ths.contentSend = ths.out.join('')
+                // ths.content = ths.out.join('')
                 // ths.out = []
-                ths.contentSend = ths.out
+                ths.content = ths.out
                 ths.out = ''
 
-                return ths.contentSend
+                return ths.content
             }
         }
     },
 
     flushBuffer: function(params) {
-        // this.contentSend = this.out.join('')
+        // this.content = this.out.join('')
         // this.out = []
-        this.contentSend = this.out
+        this.content = this.out
         this.out = ''
 
-        return this.contentSend
+        return this.content
     },
 
     setStatus: function(status) { this.status = status },
 
     setContentType: function(contentType) { this.contentType = contentType },
 
-    setCharacterEncoding: function(charset) { this.charse = charset },
+    setCharacterEncoding: function(charset) { this.charset = charset },
 
     setHeader: function(key, value) { this.headers[key] = value },
 
@@ -134,6 +135,7 @@ let response = {
         return strOut
     },
     toString: function() {
+        // print('toString =>', this.out)
         let strOut = this.out.join('')
 
         this.clean()
@@ -150,11 +152,12 @@ let response = {
             this.headers[opt] = headers[opt]
         }
 
-        // this.out[0] = (typeof (data) === 'object') ? JSON.stringify(data) : data
-        let strOut = (typeof (data) === 'object') ? JSON.stringify(data) : data
+        this.out[0] = (typeof (data) === 'object') ? JSON.stringify(data) : data
+        // print('response::json::strOut =>', this.out)
+        // let strOut = (typeof (data) === 'object') ? JSON.stringify(data) : data
 
-        this.clean()
-        return strOut
+        // this.clean()
+        // return strOut
     },
     error: {
         json: function(message, statusCode, headers) {
@@ -165,15 +168,14 @@ let response = {
                 this.headers[opt] = headers[opt]
             }
 
-            // this.out[0] = JSON.stringify({
-            let strOut = JSON.stringify({
+            this.out[0] = JSON.stringify({
+                // let strOut = JSON.stringify({
                 status: this.status,
                 message: message
             })
 
-            this.clean()
-
-            return strOut
+            // this.clean()
+            // return strOut
         }
     }
 }
@@ -333,7 +335,7 @@ let http = {
 
         router.process(params, req, res)
 
-        return res.httpResponse.contentSend
+        return res.httpResponse
     }
 }
 

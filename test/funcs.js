@@ -1,21 +1,28 @@
 exports = {
-    hello: function(params, req, res) {
-        res.write('Hello Thrust!')
+    hiThrust: function(params, req, res) {
+        res.write('Hi Thrust!')
     },
 
-    hellop: function(params, req, res) {
-        res.write('Hi ' + params.nome + '!')
+    helloWrite: function(params, req, res) {
+        res.write('Hello ' + params.nome + '!')
+    },
+
+    helloJson: function(params, req, res) {
+        res.json({ hello: params.nome })
     },
 
     GET: {
-        ghello: function(params, req, res) {
-            res.write('Hello Thrust!')
+        ghiThrust: function(params, req, res) {
+            res.write('[GET] Hi Thrust!')
+        },
+        ghelloJson: function(params, req, res) {
+            res.json({ hello: params.nome })
         }
     },
 
     POST: {
-        phello: function name(params, req, res) {
-            res.write('Hello Thrust!')
+        phiThrust: function name(params, req, res) {
+            res.write('Hi Thrust!')
         }
     }
 

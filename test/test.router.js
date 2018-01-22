@@ -37,23 +37,27 @@ function exec(describe, it, beforeEach, afterEach, expect, should, assert) {
 
     describe('Módulo de tratamento de rotas [router]', function() {
         describe('Executando rota padrão [http://<host>:<port>/<path_file>/<method>]', function() {
-            it('[GET] rota: <arquivo>/<method>', function() {
-                expect(http.get(site + '/funcs/hello').execute(router)).to.equal('Hello Thrust!')
-                expect(http.get(site + '/funcs/ghello').execute(router)).to.equal('Hello Thrust!')
-                expect(http.post(site + '/funcs/ghello').execute(router)).to.satisfy(function(result) {
-                    return result && show('result => ', result)
+            it('[GET] | res.write | rota: <arquivo>/<method>', function() {
+                expect(http.get(site + '/funcs/hiThrust').execute(router).content).to.equal('Hi Thrust!')
+                expect(http.get(site + '/funcs/ghiThrust').execute(router).content).to.equal('[GET] Hi Thrust!')
+                expect(http.get(site + '/funcs/ghiThrust').execute(router)).to.satisfy(function(response) {
+                    // show('response =>', response)
+                    return response.content === '[GET] Hi Thrust!' && response.status === 200
+                })
+                expect(http.post(site + '/funcs/ghello').execute(router)).to.satisfy(function(response) {
+                    // show('result => ', response)
+                    return response.status === 404
                 })
             })
 
-            it('[GET] rota: <arquivo>/<method>?<query_string>', function() {
-                ret = http.get('http://127.0.1:8888/funcs/hellop?nome=thrust').execute(router)
-
-                expect(ret).to.equal('Hi thrust!')
+            it('[GET] | res.json | rota: <arquivo>/<method>?<query_string>', function() {
+                expect(http.get(site + '/funcs/helloJson?nome=thrust').execute(router).content).to.deep.equal('{"hello":"thrust"}')
+                expect(http.get(site + '/funcs/ghelloJson?nome=thrust').execute(router).content).to.deep.equal('{"hello":"thrust"}')
             })
 
-            it('[POST] rota: <arquivo>/<method>', function() {
-                expect(http.post('http://127.0.1:8888/funcs/phello').execute(router)).to.equal('Hello Thrust!')
-            })
+            // it('[POST] rota: <arquivo>/<method>', function() {
+            //     expect(http.post('http://127.0.1:8888/funcs/phello').execute(router)).to.equal('Hello Thrust!')
+            // })
         })
 
         // describe('Executando rota padrão [http://<host>:<port>/<path_file>/<method>]', function() {
