@@ -94,12 +94,14 @@ let router = {
             let fncMetodo = module[methodName]
 
             if (!fncMetodo) {
-                if (!request || !request.method || !module || !module[request.method.toUpperCase()][methodName]) {
+                let moduleMethod = module[request.method.toUpperCase()]
+
+                if (!request || !request.method || !module || !moduleMethod || !moduleMethod[methodName]) {
                     response.json('Error 404: URI not found.', 404)
                     return
                 }
 
-                fncMetodo = module[request.method.toUpperCase()][methodName]
+                fncMetodo = moduleMethod[methodName]
             }
 
             fncMetodo(paramsObject, request, response)
