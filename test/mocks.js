@@ -1,35 +1,49 @@
-let httResponse = {
-
-    out: [],
+let httpResponse = {
+    out: '',
     status: 0,
     contentType: '',
     charset: '',
     headers: {},
     contentLength: 0,
+    contentSend: '',
 
     getWriter: function() {
-        let out = this.out
+        var println = function(str) {
+            // ths.out.push(str, '\n')
+            this.out = str
+        }.bind(this)
 
         return {
-            println: function(str) {
-                out.push(str, '\n')
-            }
+            println: println
         }
     },
 
     getOutputStream: function() {
-        let out = this.out
+        let ths = this
 
         return {
             write: function(str) {
-                out.push(str)
+                ths.out = str
+                // ths.out.push(str)
             },
-            flush: function(params) {
+            flush: function() {
+                // ths.contentSend = ths.out.join('')
+                // ths.out = []
+                ths.contentSend = ths.out
+                ths.out = ''
+
+                return ths.contentSend
             }
         }
     },
 
     flushBuffer: function(params) {
+        // this.contentSend = this.out.join('')
+        // this.out = []
+        this.contentSend = this.out
+        this.out = ''
+
+        return this.contentSend
     },
 
     setStatus: function(status) { this.status = status },
@@ -47,7 +61,7 @@ let httResponse = {
 let reqs = {
     get: {
         httpRequest: null,
-        host: '127.0.0.1',
+        host: 'localhost',
         port: '8778',
         queryString: 'nome=thrust&rate=100',
         rest: '/test/echo',
@@ -86,7 +100,7 @@ let reqs = {
 }
 
 let response = {
-    httpResponse: httResponse,
+    httpResponse: Object.assign({}, httpResponse, { out: '' }),
     status: 200,
     contentLength: 0,
     contentType: 'text/html',
@@ -114,41 +128,52 @@ let response = {
         return new java.lang.String(this.out).getBytes()
     },
     toJson: function() {
-        return (typeof (this.out[0]) === 'object') ? JSON.stringify(this.out[0]) : this.out.join('')
+        let strOut = (typeof (this.out[0]) === 'object') ? JSON.stringify(this.out[0]) : this.out.join('')
+
+        this.clean()
+        return strOut
     },
     toString: function() {
-        return this.out.join('')
+        let strOut = this.out.join('')
+
+        this.clean()
+        return strOut
     },
     addHeader: function(name, value) {
         this.headers[name] = value
     },
     json: function(data, statusCode, headers) {
-        var ths = this
-
         this.contentType = 'application/json'
         this.status = statusCode || 200
 
         for (var opt in (headers || {})) {
-            ths.headers[opt] = headers[opt]
+            this.headers[opt] = headers[opt]
         }
 
-        this.out[0] = (typeof (data) === 'object') ? JSON.stringify(data) : data
+        // this.out[0] = (typeof (data) === 'object') ? JSON.stringify(data) : data
+        let strOut = (typeof (data) === 'object') ? JSON.stringify(data) : data
+
+        this.clean()
+        return strOut
     },
     error: {
         json: function(message, statusCode, headers) {
-            var ths = this
-
             this.contentType = 'application/json'
             this.status = statusCode || 200
 
             for (var opt in (headers || {})) {
-                ths.headers[opt] = headers[opt]
+                this.headers[opt] = headers[opt]
             }
 
-            this.out[0] = JSON.stringify({
-                status: ths.status,
+            // this.out[0] = JSON.stringify({
+            let strOut = JSON.stringify({
+                status: this.status,
                 message: message
             })
+
+            this.clean()
+
+            return strOut
         }
     }
 }
@@ -171,7 +196,7 @@ let parseParams = function(strParams, contentType) {
         while ((ko = patt.exec(skey)) != null) {
             k = ko.toString().replace(/\[|\]/g, '')
             var m = k.match(/\d+/gi)
-            if ((m != null && m.toString().length == k.length) || ko == '[]') {
+            if ((m != null && m.toString().length === k.length) || ko === '[]') {
                 k = parseInt(k)
                 p[key] = p[key] || []
             } else {
@@ -207,24 +232,55 @@ let parseParams = function(strParams, contentType) {
     return params
 }
 
-let http = {
+function serializeParams(obj, prefix) {
+    let str = []
+    let p
 
+    for (p in obj) {
+        if (obj.hasOwnProperty(p)) {
+            let k = prefix ? prefix + '[' + p + ']' : p
+            let v = obj[p]
+
+            str.push((v !== null && typeof v === 'object')
+                ? serializeParams(v, k)
+                : encodeURIComponent(k) + '=' + encodeURIComponent(v))
+        }
+    }
+    return str.join('&')
+}
+
+let http = {
     request: null,
-    response: null,
+
     body: function(params) {
-        this.queryString = (params.constuctor.name === 'Object')
+        let isObject = params.constuctor.name === 'Object'
+
+        this.request.queryString = (isObject)
             ? JSON.stringify(params)
             : params.toString()
+        this.request.contentType = (isObject)
+            ? 'application/json'
+            : 'text/plain'
 
         return this
     },
+
     queryString: function(params) {
-        this.queryString = params.toString()
+        let isObject = params.constuctor.name === 'Object'
+
+        this.request.queryString = (isObject)
+            ? serializeParams(params)
+            : params.toString()
+        this.request.contentType = (isObject)
+            ? 'application/json'
+            : 'text/plain'
 
         return this
     },
+
     get: function(uri) {
         let req
+        let addr
         let scheme = uri.split(/:\/\//g)
         let url = (scheme.length === 2) ? scheme[1] : scheme[0]
 
@@ -235,22 +291,54 @@ let http = {
         req.requestURI = url[0]
         req.queryString = url[1] || ''
 
+        addr = req.requestURI.split('/')[0]
+
+        req.rest = req.requestURI.replace(addr, '')
+
+        addr = addr.split(':')
+
+        req.host = addr[0]
+        req.port = addr[1] || '80'
+
         return this
+    },
+
+    post: function(uri) {
+        let req
+        let addr
+        let scheme = uri.split(/:\/\//g)
+        let url = (scheme.length === 2) ? scheme[1] : scheme[0]
+
+        this.request = req = Object.assign({}, reqs.post)
+        req.scheme = (scheme.length === 2) ? scheme[0] : 'http'
+        req.requestURI = url
+
+        addr = req.requestURI.split('/')[0]
+
+        req.rest = req.requestURI.replace(addr, '')
+
+        addr = addr.split(':')
+
+        req.host = addr[0]
+        req.port = addr[1] || '80'
+
+        return this
+    },
+
+    execute: function(router) {
+        // let res = createResponse()
+        let res = Object.assign({}, response, { out: [], headers: {} })
+        let req = Object.assign({}, this.request)
+        let params = parseParams(req.queryString, req.contentType)
+
+        router.process(params, req, res)
+
+        return res.httpResponse.contentSend
     }
 }
 
 exports = {
-    mountRequire: function(reqName) {
-        return reqs[reqName]
-    },
-
-    mountResponse: function() {
-        return response
-    },
-
     reqs: reqs,
-
-    parseParams: parseParams,
 
     http: http
 }

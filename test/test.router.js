@@ -2,7 +2,7 @@
  * @author Nery Jr
  */
 
-let router = require('router')
+let router = require('../index')
 let majesty = require('majesty')
 let mocks = require('./mocks')
 
@@ -17,8 +17,6 @@ function processGET(req) {
     router.process(params, request, response)
 } */
 
-
-
 function log(user, url, endPointFileName, endPointMethodName, params, req) {
     let d = new Date()
 
@@ -30,28 +28,35 @@ function log(user, url, endPointFileName, endPointMethodName, params, req) {
 router.logFunction = log.bind(null, 'Nery')
 
 function exec(describe, it, beforeEach, afterEach, expect, should, assert) {
-    // var result
     // afterEach(function() { })
     // beforeEach(function() { })
 
-    let response = mocks.mountResponse()
-    let request = Object.assign({}, reqGetTemplate, req)
-    let params = mocks.parseParams(request.queryString, request.contentType)
-
+    let http = mocks.http
+    let site = 'http://127.0.1:8888'
+    let ret
 
     describe('Módulo de tratamento de rotas [router]', function() {
-        describe('Executando rota padrão [http://<host>/<path_file>/<method>]', function() {
-            it('[GET] ', function() {
-                expect(false).to.equal(false)
-                expect({ error: false }).to.satisfy(function(result) {
-                    return result && result.error === false
+        describe('Executando rota padrão [http://<host>:<port>/<path_file>/<method>]', function() {
+            it('[GET] rota: <arquivo>/<method>', function() {
+                expect(http.get(site + '/funcs/hello').execute(router)).to.equal('Hello Thrust!')
+                expect(http.get(site + '/funcs/ghello').execute(router)).to.equal('Hello Thrust!')
+                expect(http.post(site + '/funcs/ghello').execute(router)).to.satisfy(function(result) {
+                    return result && show('result => ', result)
                 })
             })
 
-            it('[POST]', function() {
-                expect(false).to.equal(false)
+            it('[GET] rota: <arquivo>/<method>?<query_string>', function() {
+                ret = http.get('http://127.0.1:8888/funcs/hellop?nome=thrust').execute(router)
+
+                expect(ret).to.equal('Hi thrust!')
+            })
+
+            it('[POST] rota: <arquivo>/<method>', function() {
+                expect(http.post('http://127.0.1:8888/funcs/phello').execute(router)).to.equal('Hello Thrust!')
             })
         })
+
+        // describe('Executando rota padrão [http://<host>:<port>/<path_file>/<method>]', function() {
     })
 }
 
@@ -65,7 +70,7 @@ res
     .forEach(function(fail) {
         print('[' + fail.scenario + '] =>', fail.execption)
         if (fail.execption.printStackTrace) {
-            fail.execption.printStackTrace()
+            // fail.execption.printStackTrace()
         }
     })
 
