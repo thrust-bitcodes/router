@@ -1,6 +1,6 @@
-let Charset = Java.type('java.nio.charset.Charset')
+var Charset = Java.type('java.nio.charset.Charset')
 
-let router = {
+var router = {
     applicationDirectory: './',
 
     middlewares: [],
@@ -34,9 +34,9 @@ let router = {
     },
 
     process: function(params, request, response) {
-        let mimes = ['text/html', 'text/xml', 'text/plain', 'text/javascript', 'application/javascript', 'application/json']
+        var mimes = ['text/html', 'text/xml', 'text/plain', 'text/javascript', 'application/javascript', 'application/json']
 
-        let isItOK = this.middlewares.reduce(function execMiddleware(flag, middFnc) {
+        var isItOK = this.middlewares.reduce(function execMiddleware(flag, middFnc) {
             flag = (flag === undefined) ? true : flag
 
             return flag && middFnc(params, request, response)
@@ -46,20 +46,20 @@ let router = {
             this.processRoute(params, request, response)
         }
 
-        let httpResponse = response.httpResponse
+        var httpResponse = response.httpResponse
 
         httpResponse.setStatus(response.status)
         httpResponse.setContentType(response.contentType)
         httpResponse.setCharacterEncoding(response.charset)
 
-        for (let key in response.headers) {
+        for (var key in response.headers) {
             httpResponse.setHeader(key, response.headers[key])
         }
 
-        let type = response.contentType.split(';')[0]
+        var type = response.contentType.split(';')[0]
 
         if (mimes.indexOf(type) >= 0) {
-            let sout = (response.contentType.indexOf('json') >= 0)
+            var sout = (response.contentType.indexOf('json') >= 0)
                 ? response.toJson()
                 : response.toString()
 
@@ -67,7 +67,7 @@ let router = {
             httpResponse.getWriter().println(sout)
             httpResponse.flushBuffer()
         } else {
-            let ops = httpResponse.getOutputStream()
+            var ops = httpResponse.getOutputStream()
 
             httpResponse.setContentLength(response.contentLength)
             ops.write(response.out[0])
@@ -76,25 +76,25 @@ let router = {
     },
 
     processRoute: function(paramsObject, request, response) {
-        let params = paramsObject || {}
-        let nurl = request
+        var params = paramsObject || {}
+        var nurl = request
             .rest
             .replace(/\/$/g, '')
-        let keys = Object.keys(this.vroutes)
-        let vrota
-        let rrota
+        var keys = Object.keys(this.vroutes)
+        var vrota
+        var rrota
 
         function runMethodOnModule(rrota) {
-            let path = router.applicationDirectory
+            var path = router.applicationDirectory
                 .concat(rrota)
                 .replace(/^\//, '')
                 .split('/')
-            let methodName = path.pop()
-            let module = require(path.join('/') + '.js')
-            let fncMetodo = module[methodName]
+            var methodName = path.pop()
+            var module = require(path.join('/') + '.js')
+            var fncMetodo = module[methodName]
 
             if (!fncMetodo) {
-                let moduleMethod = module[request.method.toUpperCase()]
+                var moduleMethod = module[request.method.toUpperCase()]
 
                 if (!request || !request.method || !module || !moduleMethod || !moduleMethod[methodName]) {
                     response.json('Error 404: URI not found.', 404)
@@ -107,7 +107,7 @@ let router = {
             fncMetodo(paramsObject, request, response)
         }
 
-        let splitRoute = nurl
+        var splitRoute = nurl
             .replace(/^\//, '')
             .split('/')
 
@@ -130,7 +130,7 @@ let router = {
         } else if (keys.indexOf(nurl) >= 0) { /* É simplesmente um virtual path? */
             rrota = this.vroutes[nurl]
         } else { /* Ou é uma rota com placeholder ou é uma url do tipo ../modulo/metodo */
-            let vrout = keys.map(function(rt, index) {
+            var vrout = keys.map(function(rt, index) {
                 return {
                     rota: rt.replace(/:(\w+)/g, '(\\w+)'),
                     index: index
@@ -147,19 +147,19 @@ let router = {
                     ? this.vroutes[vrota]
                     : rrota
 
-                let mat
-                let regIds = /:(\w+)/gi
-                let ids = []
+                var mat
+                var regIds = /:(\w+)/gi
+                var ids = []
 
                 while ((mat = regIds.exec(vrota)) !== null) {
                     ids.push(mat[1])
                 }
 
-                let values = nurl
+                var values = nurl
                     .match(vrout.rota)
                     .slice(1)
 
-                for (let i = 0; i < ids.length; i++) {
+                for (var i = 0; i < ids.length; i++) {
                     params[ids[i]] = values[i]
                 }
             } else { /* Não, é uma rota do tipo ../module/method */
