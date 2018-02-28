@@ -91,13 +91,19 @@ var router = {
                 .split('/')
             var methodName = path.pop()
             var module = require(path.join('/') + '.js')
+
+            if(!module) {
+                sendResponseError(request, response, rrota, 404)
+                return
+            }
+
             var fncMetodo = module[methodName]
 
             if (!fncMetodo) {
                 var moduleMethod = module[request.method.toUpperCase()]
 
-                if (!request || !request.method || !module || !moduleMethod || !moduleMethod[methodName]) {
-                    response.json('Error 404: URI not found.', 404)
+                if (!moduleMethod || !moduleMethod[methodName]) {
+                    sendResponseError(request, response, rrota, 404)
                     return
                 }
 
@@ -105,6 +111,10 @@ var router = {
             }
 
             fncMetodo(paramsObject, request, response)
+        }
+
+        function sendResponseError(request, response, route, errorCode) {
+            response.json({ message: 'Cannot ' + request.method.toUpperCase() + ' ' + route, code: errorCode }, errorCode)
         }
 
         var splitRoute = nurl
