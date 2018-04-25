@@ -2,6 +2,7 @@ var Charset = Java.type('java.nio.charset.Charset')
 
 var router = {
     applicationDirectory: './',
+    virtualRouteContext: '',
 
     middlewares: [],
 
@@ -19,8 +20,12 @@ var router = {
         router.applicationDirectory = appDirectory
     },
 
+    setVirtualRouteContext: function(virtualRouteContext) {
+        router.virtualRouteContext = virtualRouteContext
+    },
+
     addRoute: function(virtualRoute, realRoute) {
-        router.vroutes[virtualRoute] = realRoute
+        router.vroutes[router.virtualRouteContext + virtualRoute] = realRoute
     },
 
     addMiddleware: function(middleware) {

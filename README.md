@@ -63,6 +63,16 @@ Acesse um tutorial mais rico sobre roteamentos físicos e virtuais em nosso [git
 setApplicationDirectory(appDirectory) /* default "./" */
 
 /**
+ * Usado para configurar um prefixo padrão para as rotas virtuais
+ * Exemplo: 
+ * setVirtualRouteContext('thrust')
+ * addRoute('/vendas', 'app/services/vendas/default')
+ * A URL de chamada deverá ser host:port/thrust/vendas
+ * */
+setVirtualRouteContext(virtualRouteContext) /* default "" */
+
+
+/**
  * Usado para adicionar middlewares na aplicação.
  * Middlewares são funções com assinatura (prams, request, response)
  * que são chamadas no inicio do processamento das rotas.
