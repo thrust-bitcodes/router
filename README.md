@@ -1,4 +1,5 @@
 Router
+[![Build Status](https://travis-ci.org/thrust-bitcodes/router.svg?branch=master)](https://travis-ci.org/thrust-bitcodes/router) [![GitHub release](https://img.shields.io/github/release/thrust-bitcodes/router.svg)](https://github.com/thrust-bitcodes/router/releases)
 ===============
 
 Router é um *bitcode* de roteamento para [thrust](https://github.com/Thrustjs/thrust).
