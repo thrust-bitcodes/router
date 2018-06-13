@@ -95,7 +95,13 @@ var router = {
                 .replace(/^\//, '')
                 .split('/')
             var methodName = path.pop()
-            var module = require(path.join('/') + '.js')
+            var module;
+            
+            try {
+                module = require(path.join('/') + '.js')
+            } catch(e){
+                print(e);
+            }
 
             if(!module) {
                 sendResponseError(request, response, rrota, 404)
