@@ -55,7 +55,9 @@ var router = {
 
         httpResponse.setStatus(response.status)
         httpResponse.setContentType(response.contentType)
-        httpResponse.setCharacterEncoding(response.charset)
+        if(response.charset) {
+            httpResponse.setCharacterEncoding(response.charset)
+        }
 
         for (var key in response.headers) {
             httpResponse.setHeader(key, response.headers[key])
